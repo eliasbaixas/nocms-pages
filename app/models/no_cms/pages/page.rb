@@ -45,15 +45,15 @@ module NoCms::Pages
 
     def self.templates
       @templates ||= (Gem::Specification.all.map(&:gem_dir) + [Rails.root]). # We get all gems and rails paths
-        map{ |d| Dir["#{d}/app/views/no_cms/pages/pages/*.html.erb"]}. # We get all page templates
-        flatten.map { |f| File.basename(f, '.html.erb') }.uniq.sort # And get their names
+        map{ |d| Dir["#{d}/app/views/no_cms/pages/pages/*.html.*"]}. # We get all page templates
+        flatten.map { |f| File.basename(f - /\.html\..*/) }.uniq.sort # And get their names
     end
 
     def self.layouts
       return @layouts unless @layouts.blank?
       @layouts = NoCms::Pages::page_layouts if @layouts.blank?
-      @layouts = Dir["#{Rails.root}/app/views/layouts/*.html.erb"]. # We get all the files in app/views/layouts
-        map { |f| File.basename(f, '.html.erb') }. # Get the name without any extension
+      @layouts = Dir["#{Rails.root}/app/views/layouts/*.html.*"]. # We get all the files in app/views/layouts
+        map { |f| File.basename(f - /\.html\..*/) }. # Get the name without any extension
         reject {|l| l.starts_with? '_'}. # reject partials
         sort if @layouts.blank? # and sort
       @layouts
